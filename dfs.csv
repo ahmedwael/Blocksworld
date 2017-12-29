@@ -1,0 +1,35 @@
+IDS
+                 Avg Solutions,  1.0
+                 Avg Time,  0.005655121803283691
+                 Avg Expanded,  6.3
+                 Avg Added,  20.7
+                 Avg Depth,  0.0
+                 Runs,  10
+A*
+                 Avg Solutions,  1.0
+                 Avg Time,  0.0024013757705688477
+                 Avg Expanded,  4.2
+                 Avg Added,  13.4
+                 Avg Depth,  0.0
+                 Runs,  10
+BFS
+                 Avg Solutions,  1.0
+                 Avg Time,  0.00400240421295166
+                 Avg Expanded,  25.5
+                 Avg Added,  81.2
+                 Avg Depth,  0.0
+                 Runs,  10
+DFS
+                 Avg Solutions,  1.0
+                 Avg Time,  2.4635997295379637
+                 Avg Expanded,  26736.9
+                 Avg Added,  84612.4
+                 Avg Depth,  26736.9
+                 Runs,  10 ,
+SDFS
+                 Avg Solutions,  0.5
+                 Avg Time,  1.3106713771820069
+                 Avg Expanded,  4742.6
+                 Avg Added,  14770.9
+                 Avg Depth,  4512.2
+                 Runs,  10 
