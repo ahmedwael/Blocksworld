@@ -210,6 +210,7 @@ def Depth_First(start_Node, is_smart):
     f = open(filename,'w')
     #create fringe as a stack structure
     fringe = [start_Node]
+    t0 = time.time()
     while (len(fringe) >0 and len(fringe) < 2500000): #while fringe not empty, limit fringe size to avoid unlimited searching
         node = fringe.pop() #get last noded added to fringe, as DFS fringe is a stack
         if node.is_goal_state(): #if node is a goal state then end search amd print
@@ -223,6 +224,8 @@ def Depth_First(start_Node, is_smart):
             stats[node.depth] += 1
         else:
             stats[node.depth] = 1
+        if (time.time() - t0 ) > 10:
+            break
         moves = node.get_validmoves()
         nodes_expanded += 1
         shuffle(moves) #needed to randomize order of successors added to the fringe
@@ -233,12 +236,12 @@ def Depth_First(start_Node, is_smart):
          print('Last Node Expanded')
          node.print_path_file(f)
     for k, v in stats.items():
-        f.write(str(k)+' '+str(v)+'\n')     
+        f.write(str(k)+' '+str(v)+'\n')
     f.write('Found?\t'+str(solution_found)+'\n')
     f.write('Nodes Expanded\t'+str(nodes_expanded)+'\n')
     f.write('Nodes Added\t'+str(nodes_added)+'\n')
     f.close()
-    return solution_found, nodes_expanded, nodes_added
+    return solution_found, nodes_expanded, nodes_added, node.depth
 
 #performs DLS, either in a way that checks for repeated board states or not
 def Depth_Limited(start_Node, depth_limit, itr):
@@ -287,7 +290,7 @@ def Depth_Limited(start_Node, depth_limit, itr):
 #performs DLS in increasing depth limits
 def Iterative_Deepening(start_Node, depth_limit):
     c = 0
-    solution_foud = False
+    solution_found = False
     while c<=depth_limit:
         solution_found, nodes_expanded, stats, nodes_added, depth = Depth_Limited(start_Node,c,True)
         c+=1
@@ -356,12 +359,12 @@ trials = int(sys.argv[1])
 testing_depth = int(sys.argv[2])
 t = 0
 d = 0
-simple_stats = {'solution_found':0, 'nodes_expanded':0, 'nodes_added': 0, 'run_time': 0, "runs":0}
+simple_stats = {'solution_found':0, 'nodes_expanded':0, 'nodes_added': 0, 'run_time': 0, "runs":0, "depth": 0}
 depth_list = list()
 for i in range(0,testing_depth+1):
     depth_list.append(copy.deepcopy(simple_stats))
 Statistics = list()
-for i in range(0,3):
+for i in range(0,6):
     Statistics.append(copy.deepcopy(depth_list))
 while d < testing_depth:
     d += 1
@@ -384,7 +387,7 @@ while d < testing_depth:
             SIDsolution_found, SIDnodes_expanded, SIDstats, SIDnodes_added, found_depth = Iterative_Deepening(gen_Node,d)
             t1 = time.time()
             SIDrun_time = t1-t0
-            Statistics[0][found_depth]['solution_found'] += SIDsolution_found
+            Statistics[0][found_depth]['solution_found'] += 1
             Statistics[0][found_depth]['nodes_expanded'] += SIDnodes_expanded
             Statistics[0][found_depth]['nodes_added'] += SIDnodes_added
             Statistics[0][found_depth]['run_time'] += SIDrun_time
@@ -399,6 +402,8 @@ while d < testing_depth:
             Statistics[1][found_depth]['nodes_added'] += Anodes_added
             Statistics[1][found_depth]['run_time'] += Arun_time
             Statistics[1][found_depth]['runs'] += 1
+            if found_depth > 11:
+                continue
             print('Smart BFS')
             t0 = time.time()
             SBsolution_found, SBnodes_expanded, SBstats, SBnodes_added = Breadth_First(gen_Node, True)
@@ -409,17 +414,59 @@ while d < testing_depth:
             Statistics[2][found_depth]['nodes_added'] += SBnodes_added
             Statistics[2][found_depth]['run_time'] += SBrun_time
             Statistics[2][found_depth]['runs'] += 1
-method_names = ['IDS,', 'A*,', 'BFS,']
-for i in range(0,3):
+            if found_depth >10:
+                continue
+            print('BFS')
+            t0 = time.time()
+            SBsolution_found, SBnodes_expanded, SBstats, SBnodes_added = Breadth_First(gen_Node, False)
+            t1 = time.time()
+            SBrun_time = t1-t0
+            Statistics[3][found_depth]['solution_found'] += SBsolution_found
+            Statistics[3][found_depth]['nodes_expanded'] += SBnodes_expanded
+            Statistics[3][found_depth]['nodes_added'] += SBnodes_added
+            Statistics[3][found_depth]['run_time'] += SBrun_time
+            Statistics[3][found_depth]['runs'] += 1
+            if found_depth > 4:
+                continue
+            print('DFS')
+            t0 = time.time()
+            Dsolution_found, Dnodes_expanded, Dnodes_added, dfs_depth = Depth_First(gen_Node, False)
+            t1 = time.time()
+            Drun_time = t1-t0
+            Statistics[4][found_depth]['solution_found'] += Dsolution_found
+            Statistics[4][found_depth]['nodes_expanded'] += Dnodes_expanded
+            Statistics[4][found_depth]['nodes_added'] += Dnodes_added
+            if Dsolution_found:
+                Statistics[4][found_depth]['run_time'] += Drun_time
+            Statistics[4][found_depth]['runs'] += 1
+            Statistics[4][found_depth]['depth'] += dfs_depth
+            print('Smarter DFS')
+            t0 = time.time()
+            SDsolution_found, SDnodes_expanded, SDnodes_added, sdfs_depth = Depth_First(gen_Node, True)
+            t1 = time.time()
+            SDrun_time = t1-t0
+            Statistics[5][found_depth]['solution_found'] += SDsolution_found
+            Statistics[5][found_depth]['nodes_expanded'] += SDnodes_expanded
+            Statistics[5][found_depth]['nodes_added'] += SDnodes_added
+            if SDsolution_found:
+                Statistics[5][found_depth]['run_time'] += SDrun_time
+            Statistics[5][found_depth]['runs'] += 1
+            Statistics[5][found_depth]['depth'] += sdfs_depth
+method_names = ['IDS,', 'A*,', 'BFS', 'BFS', 'DFS,', 'SDFS,']
+for i in range(0,6):
     print(method_names[i])
     for d in range(0,testing_depth):
         print('\tDepth, ',d+1,',')
         if Statistics[i][d+1]['runs'] == 0:
             continue
-        averagetime = Statistics[i][d+1]['run_time']/Statistics[i][d+1]['runs']
+        averagefound = Statistics[i][d+1]['solution_found']/Statistics[i][d+1]['runs']
+        averagetime = Statistics[i][d+1]['run_time']/Statistics[i][d+1]['solution_found']
         averageexpanded = Statistics[i][d+1]['nodes_expanded']/Statistics[i][d+1]['runs']
         averageadded = Statistics[i][d+1]['nodes_added']/Statistics[i][d+1]['runs']
+        averagedepth = Statistics[i][d+1]['depth']/Statistics[i][d+1]['runs']
+        print('\t\t Avg Solutions, ',averagefound,',')
         print('\t\t Avg Time, ',averagetime,',')
         print('\t\t Avg Expanded, ', averageexpanded,',')
         print('\t\t Avg Added, ', averageadded,',')
+        print('\t\t Avg Depth, ', averagedepth,',')
         print('\t\t Runs, ', Statistics[i][d+1]['runs'],',')

@@ -236,7 +236,7 @@ def Depth_First(start_Node, is_smart):
          print('Last Node Expanded')
          #node.print_path_file(f)
     for k, v in stats.items():
-        f.write(str(k)+' '+str(v)+'\n')     
+        f.write(str(k)+' '+str(v)+'\n')
     f.write('Found?\t'+str(solution_found)+'\n')
     f.write('Depth?\t'+str(node.depth)+'\n')
     f.write('Nodes Expanded\t'+str(nodes_expanded)+'\n')
@@ -356,8 +356,8 @@ start_Node = Node(start_state, [3,3], None, 0,-1,0)
 start_Node.heuristic = start_Node.manhattan()
 goal_Node = Node(goal_state, [3,2], None, 0,-1,0)
 
-trials = int(sys.argv[1])
-testing_depth = int(sys.argv[2])
+trials = int(1)
+testing_depth = int(sys.argv[1])
 t = 0
 d = testing_depth -1
 simple_stats = {'solution_found':0, 'nodes_expanded':0, 'nodes_added': 0, 'run_time': 0, "runs":0, 'depth':0}
