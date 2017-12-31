@@ -386,16 +386,16 @@ Statistics[2]['nodes_expanded'] += SBnodes_expanded
 Statistics[2]['nodes_added'] += SBnodes_added
 Statistics[2]['run_time'] += SBrun_time
 Statistics[2]['runs'] += 1
-# print('BFS')
-# t0 = time.time()
-# SBsolution_found, SBnodes_expanded, SBstats, SBnodes_added = Breadth_First(gen_Node, False)
-# t1 = time.time()
-# SBrun_time = t1-t0
-# Statistics[3]['solution_found'] += SBsolution_found
-# Statistics[3]['nodes_expanded'] += SBnodes_expanded
-# Statistics[3]['nodes_added'] += SBnodes_added
-# Statistics[3]['run_time'] += SBrun_time
-# Statistics[3]['runs'] += 1
+print('BFS')
+t0 = time.time()
+SBsolution_found, SBnodes_expanded, SBstats, SBnodes_added = Breadth_First(gen_Node, False)
+t1 = time.time()
+SBrun_time = t1-t0
+Statistics[3]['solution_found'] += SBsolution_found
+Statistics[3]['nodes_expanded'] += SBnodes_expanded
+Statistics[3]['nodes_added'] += SBnodes_added
+Statistics[3]['run_time'] += SBrun_time
+Statistics[3]['runs'] += 1
 method_names = ['IDS,', 'A*,', 'SBFS,','BFS,']
 for i in range(0,3):
     print(method_names[i])
@@ -404,7 +404,6 @@ for i in range(0,3):
     averagetime = Statistics[i]['run_time']/Statistics[i]['runs']
     averageexpanded = Statistics[i]['nodes_expanded']/Statistics[i]['runs']
     averageadded = Statistics[i]['nodes_added']/Statistics[i]['runs']
-    print('\t\t Avg Time, ',averagetime,',')
-    print('\t\t Avg Expanded, ', averageexpanded,',')
-    print('\t\t Avg Added, ', averageadded,',')
-    print('\t\t Runs, ', Statistics[i]['runs'],',')
+    print('\t\t Time, ',averagetime,',')
+    print('\t\t Expanded, ', averageexpanded,',')
+    print('\t\t Added, ', averageadded,',')

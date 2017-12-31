@@ -173,7 +173,6 @@ def Astar(start_Node):
     f = open(filename,'w')
     fringe = [start_Node]
     while (len(fringe) >0): #while fringe not empty
-        fringe.sort(key=lambda x: x.depth + x.heuristic, reverse = True) #sort fringe by evaluation function
         node = fringe.pop() #get the fittest node from the fringe
         if node.is_goal_state(): #if node is goal state, solution is found and print it
             solution_found = True
@@ -190,13 +189,15 @@ def Astar(start_Node):
         for i in moves:
             fringe.append(node.move(i))
             nodes_added += 1
+        #sort fringe by evaluation function
+        fringe.sort(key=lambda x: x.depth + x.heuristic, reverse = True)
     f.write('Found?\t'+str(solution_found)+'\n')
     f.write('Nodes Expanded\t'+str(nodes_expanded)+'\n')
     f.write('Nodes Added\t'+str(nodes_added)+'\n')
     for k, v in stats.items():
         f.write(str(k)+' '+str(v)+'\n')
     f.close()
-    return solution_found, nodes_expanded, stats, nodes_added
+    return solution_found, nodes_expanded, stats, nodes_added, node.depth
 #performs DFS, either in a way that checks for repeated board states or not
 def Depth_First(start_Node, is_smart):
     #counters and flags
@@ -374,14 +375,22 @@ while d < testing_depth:
         t += 1
         print('Trial '+str(t))
         gen_Node = goal_Node.generate_start(d)
-        #gen_Node.print_step()
-        #pprint(gen_Node.state)
         if gen_Node.is_goal_state():
             print('Start Node is goal state')
         else:
-            #start_Node.print_step()
-            #pprint(start_Node.state)
-            # input('Press enter for smarter iterative deepening')
+            print('Smart A*')
+            t0 = time.time()
+            Asolution_found, Anodes_expanded, Astats, Anodes_added, found_depth = Astar(gen_Node)
+            if found_depth < d:
+                t-=1
+                continue
+            t1 = time.time()
+            Arun_time = t1-t0
+            Statistics[1][found_depth]['solution_found'] += Asolution_found
+            Statistics[1][found_depth]['nodes_expanded'] += Anodes_expanded
+            Statistics[1][found_depth]['nodes_added'] += Anodes_added
+            Statistics[1][found_depth]['run_time'] += Arun_time
+            Statistics[1][found_depth]['runs'] += 1
             print('Smart Iterative deepening')
             t0 = time.time()
             SIDsolution_found, SIDnodes_expanded, SIDstats, SIDnodes_added, found_depth = Iterative_Deepening(gen_Node,d)
@@ -392,16 +401,6 @@ while d < testing_depth:
             Statistics[0][found_depth]['nodes_added'] += SIDnodes_added
             Statistics[0][found_depth]['run_time'] += SIDrun_time
             Statistics[0][found_depth]['runs'] += 1
-            print('Smart A*')
-            t0 = time.time()
-            Asolution_found, Anodes_expanded, Astats, Anodes_added = Astar(gen_Node)
-            t1 = time.time()
-            Arun_time = t1-t0
-            Statistics[1][found_depth]['solution_found'] += Asolution_found
-            Statistics[1][found_depth]['nodes_expanded'] += Anodes_expanded
-            Statistics[1][found_depth]['nodes_added'] += Anodes_added
-            Statistics[1][found_depth]['run_time'] += Arun_time
-            Statistics[1][found_depth]['runs'] += 1
             if found_depth > 11:
                 continue
             print('Smart BFS')
